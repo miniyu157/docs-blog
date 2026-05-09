@@ -79,7 +79,33 @@ function setThemeFeature(): void {
   document.querySelector("#theme-btn")?.addEventListener("click", () => {
     themeValue = themeValue === LIGHT ? DARK : LIGHT;
     window.theme?.setTheme(themeValue);
-    setPreference();
+
+    // setPreference();
+
+    if (
+      !("startViewTransition" in document) ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setPreference();
+      return;
+    }
+
+    document.documentElement.classList.add("theme-transition");
+
+    // Explicitly define the transition type to fix eslint any error
+    const doc = document as Document & {
+      startViewTransition: (callback: () => void) => {
+        finished: Promise<void>;
+      };
+    };
+
+    const transition = doc.startViewTransition(() => {
+      setPreference();
+    });
+
+    transition.finished.then(() => {
+      document.documentElement.classList.remove("theme-transition");
+    });
   });
 }
 
