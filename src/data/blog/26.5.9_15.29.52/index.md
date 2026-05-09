@@ -16,7 +16,7 @@ description: 随便写了点。
 
 ![旧博客网站截图](./旧博客网站截图.png)
 
-<figcaption class="text-center">
+<figcaption class="text-center text-sm -mt-6 mb-6">
 没错，目前依旧啥也没有。
 </figcaption>
 
@@ -28,7 +28,7 @@ description: 随便写了点。
 
 ![m31flower.com主域名的443](./m31flower.com主域名的443.png)
 
-<figcaption class="text-center">
+<figcaption class="text-center text-sm -mt-6 mb-6">
 《仙女座之花》
 
 开心地甚至给门牌设计了 Logo，deepseek-v4-pro 和 gemini-3.1-pro 都用上了。
@@ -37,7 +37,7 @@ description: 随便写了点。
 
 前几天有人需要帮忙安装操作系统，实践的过程中，顺手写下了一篇文档，还挺实用的？
 
-<figcaption>
+<figcaption class="text-sm -mt-6 mb-6">
 （我想在这里放一个文章卡片，不知道主题有没有这个功能。）
 </figcaption>
 
@@ -47,7 +47,7 @@ description: 随便写了点。
 
 ![站点git提交](站点git提交.png)
 
-<figcaption class="text-center">
+<figcaption class="text-center text-sm -mt-6 mb-6">
 也许工整，也许不工整的提交记录。
 </figcaption>
 

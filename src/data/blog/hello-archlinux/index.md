@@ -14,15 +14,11 @@ description:
   2026年通用的 UEFI archlinux 安装笔记，包括 VMware 虚拟机的设置。
 ---
 
-<figure>
-  <img
-    src="/src/data/blog/hello-archlinux/54321987_p0_master1200.jpg"
-    alt="Free Classic wooden desk with writing materials, vintage clock, and a leather bag. Stock Photo"
-  />
-    <figcaption class="text-center">
-    Photo by <a href="https://www.pixiv.net/artworks/54321987">pixiv@pagarmidna</a>
-  </figcaption>
-</figure>
+![54321987_p0_master1200](./54321987_p0_master1200.jpg)
+
+<figcaption class="text-center text-sm -mt-6 mb-6">
+  Photo by <a href="https://www.pixiv.net/artworks/54321987">pixiv@pagarmidna</a>
+</figcaption>
 
 ## VMware 的一些注意事项
 
