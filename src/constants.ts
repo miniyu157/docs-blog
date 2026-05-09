@@ -7,6 +7,7 @@ import IconWhatsapp from "@/assets/icons/IconWhatsapp.svg";
 import IconFacebook from "@/assets/icons/IconFacebook.svg";
 import IconTelegram from "@/assets/icons/IconTelegram.svg";
 import IconPinterest from "@/assets/icons/IconPinterest.svg";
+import IconQQ from "@/assets/icons/IconQQ.svg";
 import { SITE } from "@/config";
 
 interface Social {
@@ -40,6 +41,12 @@ export const SOCIALS: Social[] = [
     href: "mailto:miniyu157@163.com",
     linkTitle: `Send an email to ${SITE.title}`,
     icon: IconMail,
+  },
+  {
+    name: "QQ",
+    href: "javascript:(()=>{const t=document.createElement('textarea');t.value='1979287894';document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);alert('1979287894: 已复制到剪贴板。');})();",
+    linkTitle: `复制QQ号码`,
+    icon: IconQQ,
   },
 ] as const;
 
