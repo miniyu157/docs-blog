@@ -96,8 +96,31 @@ const nextPost =
     >
       {title}
     </h1>
-    <div class="my-2 flex items-center gap-2">
+
+    {/* 文章摘要 */}
+    {
+      description && (
+        <p class="text-skin-base mt-2 text-base italic opacity-80">
+          {description}
+        </p>
+      )
+    }
+
+    {/* 作者、时间、编辑页面、标签 */}
+    <div class="my-2 flex flex-wrap items-center gap-2">
+      {
+        author && (
+          <>
+            <span>
+              By <span class="text-accent/80">{author}</span>
+            </span>
+            <span aria-hidden="true">|</span>
+          </>
+        )
+      }
+
       <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
+
       <span
         aria-hidden="true"
         class:list={[
@@ -106,6 +129,16 @@ const nextPost =
         ]}>|</span
       >
       <EditPost {hideEditPost} {post} class="max-sm:hidden" />
+
+      {
+        tags.length > 0 && (
+          <ul class="m-0 flex w-full list-none flex-wrap gap-2 p-0 sm:ml-auto sm:w-auto">
+            {tags.map(tag => (
+              <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />
+            ))}
+          </ul>
+        )
+      }
     </div>
     <article
       id="article"
@@ -117,10 +150,6 @@ const nextPost =
     <hr class="my-8 border-dashed" />
 
     <EditPost class="sm:hidden" {hideEditPost} {post} />
-
-    <ul class="mt-4 mb-8 flex flex-wrap gap-4 sm:my-8">
-      {tags.map(tag => <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />)}
-    </ul>
 
     <BackToTopButton />
 
