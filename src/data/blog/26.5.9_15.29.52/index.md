@@ -30,7 +30,8 @@ description: 随便写了点。
 
 <figcaption class="text-center text-sm -mt-6 mb-6">
 《仙女座之花》
-
+</figcaption>
+<figcaption class="text-center text-sm -mt-6 mb-6">
 开心地甚至给门牌设计了 Logo，deepseek-v4-pro 和 gemini-3.1-pro 都用上了。
 打算一直续费了。
 </figcaption>
@@ -69,7 +70,7 @@ AstroPaper 主题的组件文本竟然都是写死的，一个一个汉化真的
 
 不同屏幕下的返回顶部按钮长得也不同。
 
-emmmm...这个字体的可读性好像也不是很好。
+<s>emmmm...这个字体的可读性好像也不是很好。</s>
 
 SEO 分享的图片和网站的 favicon 没有换。
 
