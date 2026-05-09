@@ -8,9 +8,18 @@
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
   font-family: "ZCOOL XiaoWei";
   src: url("/fonts/ZCOOLXiaoWei-Regular.ttf.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "LXGW WenKai Screen";
+  src: url("/fonts/LXGWWenKaiScreen.ttf.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -38,7 +47,8 @@ html[data-theme="dark"] {
 @theme inline {
   /* --font-app: var(--font-google-sans-code); */
   /* --font-app: "ChillRoundF", sans-serif; */
-  --font-app: "ZCOOL XiaoWei", sans-serif;
+  /* --font-app: "ZCOOL XiaoWei", sans-serif; */
+  --font-app: "LXGW WenKai Screen", sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
