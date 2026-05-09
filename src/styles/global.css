@@ -13,19 +13,19 @@
 
 :root,
 html[data-theme="light"] {
-  --background: #fdfdfd;
-  --foreground: #282728;
-  --accent: #006cac;
-  --muted: #e6e6e6;
-  --border: #ece9e9;
+  --background: #fff5f7;
+  --foreground: #4a3b3f;
+  --accent: #d96c85;
+  --muted: #f6e6ea;
+  --border: #ebd3d8;
 }
 
 html[data-theme="dark"] {
-  --background: #212737;
-  --foreground: #eaedf3;
-  --accent: #ff6b01;
-  --muted: #343f60;
-  --border: #ab4b08;
+  --background: #2c2225;
+  --foreground: #eedadb;
+  --accent: #f08fa4;
+  --muted: #3d3034;
+  --border: #544347;
 }
 
 @theme inline {
