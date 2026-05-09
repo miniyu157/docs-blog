@@ -3,7 +3,7 @@ export const SITE = {
   author: "Yumeka",
   profile: "https://github.com/miniyu157/",
   desc: "梦花的个人博客与文档库，分享技术与日常。",
-  title: "梦花の文档库",
+  title: "梦花的文档库",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,
   postPerIndex: 4,
