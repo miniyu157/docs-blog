@@ -1,0 +1,26 @@
+---
+import { getEntry } from "astro:content";
+import Card from "./Card.astro";
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+
+const post = await getEntry("blog", slug);
+---
+
+{
+  post ? (
+    <div class="not-prose border px-4">
+      <ul class="m-0 list-none p-0">
+        <Card {...post} variant="h3" />
+      </ul>
+    </div>
+  ) : (
+    <div class="rounded-lg border border-red-500 p-4 text-red-500">
+      文章未找到: {slug}
+    </div>
+  )
+}
