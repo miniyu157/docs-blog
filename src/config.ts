@@ -2,7 +2,7 @@ export const SITE = {
   website: "https://blog.m31flower.com/", // replace this with your deployed domain
   author: "Yumeka",
   profile: "https://github.com/miniyu157/",
-  desc: "梦花的个人博客与文档库，分享技术与日常。",
+  desc: "梦花会在这里分享一些技术与日常。",
   title: "梦花的文档库",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,
