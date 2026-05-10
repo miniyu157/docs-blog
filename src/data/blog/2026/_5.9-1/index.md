@@ -3,7 +3,7 @@
 pubDatetime: 2026-05-09T15:29:52+08:00
 modDatetime: 2026-05-09T18:47:12+08:00
 title: 网站上线之前...
-slug: 26.5.9_15.29.52
+slug: 5.9-1
 featured: false
 draft: false
 tags:
