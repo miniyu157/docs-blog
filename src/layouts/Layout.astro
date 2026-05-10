@@ -51,7 +51,7 @@ const structuredData = {
 <!doctype html>
 <html
   dir={SITE.dir}
-  lang=`${SITE.lang ?? "en"}`
+  lang={`${SITE.lang ?? "en"}`}
   class={`${scrollSmooth && "scroll-smooth"}`}
 >
   <head>
@@ -170,7 +170,60 @@ const structuredData = {
   <body>
     <slot />
 
+    <!-- Progress bar for page transitions -->
+    <!-- transition:persist 确保在路由切换时 DOM 不会被销毁重置，从而保障动画平滑过渡 -->
+    <div id="page-progress" transition:persist="progress-bar"></div>
+
     <!-- Load full theme logic -->
     <script src="../scripts/theme.ts"></script>
+
+    <!-- Page transition lifecycle: persistent progress bar + dev‑mode simulated latency -->
+    <script>
+      // Astro's module scripts run exactly once per session, perfect for global event listeners.
+      
+      document.addEventListener("astro:before-preparation", (event) => {
+        const progressEl = document.getElementById("page-progress");
+        if (!progressEl) return;
+
+        // Reset to 0 instantly without transition
+        progressEl.className = "progress-reset";
+        void progressEl.offsetWidth; // Force reflow to apply reset instantly
+
+        // Start loading animation (0 -> 70% slowly)
+        progressEl.className = "progress-start";
+
+        // ----- Only in development: mimic random network latency -----
+        if (import.meta.env.DEV) {
+          const originalLoader = event.loader;
+          event.loader = async () => {
+            const delay = Math.random() * 800 + 400; // 400–1200ms random delay
+            await new Promise((resolve) => setTimeout(resolve, delay));
+            await originalLoader();
+          };
+        }
+        // --------------------------------------------------------------
+      });
+
+      document.addEventListener("astro:after-preparation", () => {
+        const progressEl = document.getElementById("page-progress");
+        if (progressEl) {
+          // Switch to complete class (70% -> 100% quickly)
+          progressEl.className = "progress-complete";
+        }
+      });
+
+      document.addEventListener("astro:page-load", () => {
+        const progressEl = document.getElementById("page-progress");
+        if (progressEl && progressEl.classList.contains("progress-complete")) {
+          // Wait 300ms for the scaleX(1) complete animation to finish physically, then fade out
+          setTimeout(() => {
+            // Check if it's still completed (prevents bugs if user clicks rapidly)
+            if (progressEl.classList.contains("progress-complete")) {
+              progressEl.className = "progress-hidden";
+            }
+          }, 300);
+        }
+      });
+    </script>
   </body>
 </html>

@@ -76,6 +76,37 @@ html[data-theme="dark"] {
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+
+  /* 页面切换进度条动画 */
+  #page-progress {
+    @apply fixed top-0 left-0 z-[10000] h-[2px] origin-left bg-accent;
+    width: 100%;
+    transform: scaleX(0);
+    opacity: 0;
+    pointer-events: none;
+  }
+  #page-progress.progress-reset {
+    transform: scaleX(0);
+    opacity: 0;
+    transition: none;
+  }
+  #page-progress.progress-start {
+    transform: scaleX(0.7);
+    opacity: 1;
+    transition:
+      transform 3s cubic-bezier(0.075, 0.82, 0.165, 1),
+      opacity 0.2s ease;
+  }
+  #page-progress.progress-complete {
+    transform: scaleX(1);
+    opacity: 1;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  #page-progress.progress-hidden {
+    transform: scaleX(1);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 }
 
 @utility max-w-app {
@@ -95,6 +126,8 @@ html[data-theme="dark"] {
 :target {
   scroll-margin-block: 1rem;
 }
+
+/* 主题切换动画 */
 
 .theme-transition::view-transition-old(root),
 .theme-transition::view-transition-new(root) {
