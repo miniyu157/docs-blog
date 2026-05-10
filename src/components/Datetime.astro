@@ -26,15 +26,55 @@ const {
   timezone: postTimezone,
 } = Astro.props;
 
+function getSmartDate(date: string | Date, tz?: string) {
+  const target = dayjs(date).tz(tz || SITE.timezone);
+  const now = dayjs().tz(tz || SITE.timezone);
+
+  if (!target.isValid()) return "无效日期";
+
+  const diffDays = target.startOf("day").diff(now.startOf("day"), "day");
+  const diffYears = target.year() - now.year();
+  const timeStr = target.format("HH:mm");
+
+  if (diffDays === 0) {
+    const diffMinutes = Math.floor(now.diff(target, "minute", true));
+    if (diffMinutes >= 0 && diffMinutes < 1) return "刚刚";
+    if (diffMinutes >= 1 && diffMinutes < 60) return `${diffMinutes}分钟前`;
+  }
+
+  if (diffDays === 0) return `今天 ${timeStr}`;
+  if (diffDays === -1) return `昨天 ${timeStr}`;
+  if (diffDays === -2) return `前天 ${timeStr}`;
+  if (diffDays === 1) return `明天 ${timeStr}`;
+  if (diffDays === 2) return `后天 ${timeStr}`;
+
+  const dateStr = target.format("M月D日");
+
+  if (diffYears === 0) return `${dateStr} ${timeStr}`;
+  if (diffYears === 1) return `明年${dateStr}`;
+  if (diffYears === -1) return `去年${dateStr}`;
+
+  return target.format("YYYY年M月D日");
+}
+
 /* ========== Formatted Datetime ========== */
-const isModified = modDatetime && modDatetime > pubDatetime;
+const pubTzDatetime = dayjs(pubDatetime).tz(postTimezone || SITE.timezone);
+const modTzDatetime = modDatetime
+  ? dayjs(modDatetime).tz(postTimezone || SITE.timezone)
+  : null;
 
-const datetime = dayjs(isModified ? modDatetime : pubDatetime).tz(
-  postTimezone || SITE.timezone
-);
+const isModified = modTzDatetime ? modTzDatetime.isAfter(pubTzDatetime) : false;
 
-const fallbackDate = datetime.format("YYYY-MM-DD");
-const isoDatetime = datetime.toISOString();
+const pubFallbackDate = getSmartDate(pubDatetime, postTimezone);
+const pubIsoDatetime = pubTzDatetime.toISOString();
+
+let modIsoDatetime = "";
+let modFallbackDate = "";
+
+if (isModified && modTzDatetime) {
+  modFallbackDate = getSmartDate(modDatetime!, postTimezone);
+  modIsoDatetime = modTzDatetime.toISOString();
+}
 ---
 
 <div class:list={["flex items-center gap-x-2 opacity-80", className]}>
@@ -44,62 +84,19 @@ const isoDatetime = datetime.toISOString();
       { "scale-90": size === "sm" },
     ]}
   /> -->
+
+  <time
+    datetime={pubIsoDatetime}
+    class:list={["text-sm", { "sm:text-base": size === "lg" }]}
+  >
+    {pubFallbackDate}
+  </time>
+
   {
     isModified && (
       <span class:list={["text-sm", { "sm:text-base": size === "lg" }]}>
-        修订
+        (修订: <time datetime={modIsoDatetime}>{modFallbackDate}</time>)
       </span>
     )
   }
-  <relative-time
-    data-time={isoDatetime}
-    class:list={["text-sm", { "sm:text-base": size === "lg" }]}
-  >
-    <time datetime={isoDatetime}>{fallbackDate}</time>
-  </relative-time>
 </div>
-
-<script>
-  class RelativeTime extends HTMLElement {
-    constructor() {
-      super();
-      const isoTime = this.getAttribute("data-time");
-      if (!isoTime) return;
-
-      const date = new Date(isoTime);
-      const now = new Date();
-      const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-      if (diffInSeconds < 0) {
-        const timeEl = this.querySelector("time");
-        if (timeEl) {
-          timeEl.textContent = date.toISOString().split("T")[0];
-        }
-        return;
-      }
-
-      const rtf = new Intl.RelativeTimeFormat("zh-CN", { numeric: "auto" });
-
-      const minutes = Math.floor(diffInSeconds / 60);
-      const hours = Math.floor(minutes / 60);
-      const days = Math.floor(hours / 24);
-      const months = Math.floor(days / 30);
-      const years = Math.floor(days / 365);
-
-      let relativeText = "";
-      if (years > 0) relativeText = rtf.format(-years, "year");
-      else if (months > 0) relativeText = rtf.format(-months, "month");
-      else if (days > 0) relativeText = rtf.format(-days, "day");
-      else if (hours > 0) relativeText = rtf.format(-hours, "hour");
-      else if (minutes > 0) relativeText = rtf.format(-minutes, "minute");
-      else relativeText = "刚刚";
-
-      const timeEl = this.querySelector("time");
-      if (timeEl) {
-        timeEl.textContent = relativeText;
-      }
-    }
-  }
-
-  customElements.define("relative-time", RelativeTime);
-</script>
