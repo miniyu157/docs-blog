@@ -245,13 +245,16 @@ const mask = "radial-gradient(circle, transparent, black)";
        * Adapted from Anthony Fu's antfu.me (MIT License)
        * Source: https://github.com/antfu/antfu.me/blob/main/src/components/ArtPlum.vue
        */
+
+      let animationFrameId: number;
+
       function initPlumBlossom() {
         const canvas = document.getElementById(
           "plum-canvas"
         ) as HTMLCanvasElement | null;
-        if (!canvas || canvas.getAttribute("data-initialized") === "true")
-          return;
-        canvas.setAttribute("data-initialized", "true");
+        if (!canvas) return;
+
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
 
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
@@ -266,7 +269,6 @@ const mask = "radial-gradient(circle, transparent, black)";
         let size = { width: window.innerWidth, height: window.innerHeight };
         let steps: (() => void)[] = [];
         let prevSteps: (() => void)[] = [];
-        let animationFrameId: number;
         let lastTime = performance.now();
         const interval = 1000 / 40;
 
@@ -346,7 +348,6 @@ const mask = "radial-gradient(circle, transparent, black)";
         }
 
         function start() {
-          if (animationFrameId) cancelAnimationFrame(animationFrameId);
           initCanvas();
           ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
 
