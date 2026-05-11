@@ -141,14 +141,44 @@ html[data-theme="dark"] {
 
 .theme-transition::view-transition-new(root) {
   z-index: 9999;
-  animation: theme-wipe-down 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 亮 → 暗：新视图从上向下擦除展开 */
+.theme-transition[data-transition-direction="down"]::view-transition-new(root) {
+  animation: theme-wipe-down 0.55s cubic-bezier(0.4, 0.0, 0.2, 1) both;
+}
+
+/* 暗 → 亮：新视图从下向上擦除展开 */
+.theme-transition[data-transition-direction="up"]::view-transition-new(root) {
+  animation: theme-wipe-up 0.55s cubic-bezier(0.4, 0.0, 0.2, 1) both;
 }
 
 @keyframes theme-wipe-down {
   0% {
     clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+    transform: scale(0.96);
+    opacity: 0.6;
+    filter: blur(2px);
   }
   100% {
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: scale(1);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes theme-wipe-up {
+  0% {
+    clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+    transform: scale(0.96);
+    opacity: 0.6;
+    filter: blur(2px);
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: scale(1);
+    opacity: 1;
+    filter: blur(0);
   }
 }

@@ -77,6 +77,7 @@ function setThemeFeature(): void {
 
   // now this script can find and listen for clicks on the control
   document.querySelector("#theme-btn")?.addEventListener("click", () => {
+    const oldTheme = themeValue;
     themeValue = themeValue === LIGHT ? DARK : LIGHT;
     window.theme?.setTheme(themeValue);
 
@@ -90,7 +91,11 @@ function setThemeFeature(): void {
       return;
     }
 
+    // 根据切换方向设置动画方向属性
+    // 亮->暗：从上到下（down）；暗->亮：从下到上（up）
+    const direction = oldTheme === LIGHT ? "down" : "up";
     document.documentElement.classList.add("theme-transition");
+    document.documentElement.setAttribute("data-transition-direction", direction);
 
     // Explicitly define the transition type to fix eslint any error
     const doc = document as Document & {
@@ -105,6 +110,7 @@ function setThemeFeature(): void {
 
     transition.finished.then(() => {
       document.documentElement.classList.remove("theme-transition");
+      document.documentElement.removeAttribute("data-transition-direction");
     });
   });
 }
