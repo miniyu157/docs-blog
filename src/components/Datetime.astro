@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import "dayjs/locale/zh-cn";
-// import IconCalendar from "@/assets/icons/IconCalendar.svg";
 import { SITE } from "@/config";
 
 dayjs.extend(utc);
@@ -26,77 +25,139 @@ const {
   timezone: postTimezone,
 } = Astro.props;
 
-function getSmartDate(date: string | Date, tz?: string) {
-  const target = dayjs(date).tz(tz || SITE.timezone);
-  const now = dayjs().tz(tz || SITE.timezone);
+const effectiveTz = postTimezone || SITE.timezone;
 
-  if (!target.isValid()) return "无效日期";
-
-  const diffDays = target.startOf("day").diff(now.startOf("day"), "day");
-  const diffYears = target.year() - now.year();
-  const timeStr = target.format("HH:mm");
-
-  if (diffDays === 0) {
-    const diffMinutes = Math.floor(now.diff(target, "minute", true));
-    if (diffMinutes >= 0 && diffMinutes < 1) return "刚刚";
-    if (diffMinutes >= 1 && diffMinutes < 60) return `${diffMinutes}分钟前`;
-  }
-
-  if (diffDays === 0) return `今天 ${timeStr}`;
-  if (diffDays === -1) return `昨天 ${timeStr}`;
-  if (diffDays === -2) return `前天 ${timeStr}`;
-  if (diffDays === 1) return `明天 ${timeStr}`;
-  if (diffDays === 2) return `后天 ${timeStr}`;
-
-  const dateStr = target.format("M月D日");
-
-  if (diffYears === 0) return `${dateStr} ${timeStr}`;
-  if (diffYears === 1) return `明年${dateStr}`;
-  if (diffYears === -1) return `去年${dateStr}`;
-
-  return target.format("YYYY年M月D日");
-}
-
-/* ========== Formatted Datetime ========== */
-const pubTzDatetime = dayjs(pubDatetime).tz(postTimezone || SITE.timezone);
+const pubTzDatetime = dayjs(pubDatetime).tz(effectiveTz);
 const modTzDatetime = modDatetime
-  ? dayjs(modDatetime).tz(postTimezone || SITE.timezone)
+  ? dayjs(modDatetime).tz(effectiveTz)
   : null;
 
 const isModified = modTzDatetime ? modTzDatetime.isAfter(pubTzDatetime) : false;
 
-const pubFallbackDate = getSmartDate(pubDatetime, postTimezone);
 const pubIsoDatetime = pubTzDatetime.toISOString();
+const pubFallback = pubTzDatetime.format("YYYY年M月D日 HH:mm");
 
 let modIsoDatetime = "";
-let modFallbackDate = "";
+let modFallback = "";
 
 if (isModified && modTzDatetime) {
-  modFallbackDate = getSmartDate(modDatetime!, postTimezone);
   modIsoDatetime = modTzDatetime.toISOString();
+  modFallback = modTzDatetime.format("YYYY年M月D日 HH:mm");
 }
 ---
 
-<div class:list={["flex items-center gap-x-2 opacity-80", className]}>
-  <!-- <IconCalendar
-    class:list={[
-      "inline-block size-6 min-w-5.5",
-      { "scale-90": size === "sm" },
-    ]}
-  /> -->
-
+<div
+  class:list={["flex items-center gap-x-2 opacity-80", className]}
+  data-relative-time-tz={effectiveTz}
+>
   <time
     datetime={pubIsoDatetime}
+    data-fallback={pubFallback}
     class:list={["text-sm", { "sm:text-base": size === "lg" }]}
   >
-    {pubFallbackDate}
+    {pubFallback}
   </time>
 
   {
     isModified && (
       <span class:list={["text-sm", { "sm:text-base": size === "lg" }]}>
-        (修订: <time datetime={modIsoDatetime}>{modFallbackDate}</time>)
+        (修订: <time datetime={modIsoDatetime} data-fallback={modFallback}>{modFallback}</time>)
       </span>
     )
   }
 </div>
+
+<script>
+  function initRelativeTime() {
+    const containers = document.querySelectorAll("[data-relative-time-tz]");
+    if (containers.length === 0) return;
+
+    const lang = "zh-CN";
+
+    type DateParts = {
+      year: number;
+      month: number;
+      day: number;
+      hour: number;
+      minute: number;
+    };
+
+    function getParts(date: Date, tz: string): DateParts {
+      const fmt = new Intl.DateTimeFormat(lang, {
+        timeZone: tz,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      });
+      const parts: DateParts = { year: 0, month: 0, day: 0, hour: 0, minute: 0 };
+      fmt.formatToParts(date).forEach((p) => {
+        const key = p.type as keyof DateParts;
+        if (key in parts) {
+          parts[key] = parseInt(p.value, 10);
+        }
+      });
+      return parts;
+    }
+
+    const now = new Date();
+
+    containers.forEach((container) => {
+      const tz = container.getAttribute("data-relative-time-tz") || "Asia/Shanghai";
+      const times = container.querySelectorAll("time[datetime]");
+
+      times.forEach((el) => {
+        const iso = el.getAttribute("datetime");
+        if (!iso) return;
+
+        const target = new Date(iso);
+        const tp = getParts(target, tz);
+        const np = getParts(now, tz);
+
+        const targetDayStart = Date.UTC(tp.year, tp.month - 1, tp.day);
+        const nowDayStart = Date.UTC(np.year, np.month - 1, np.day);
+        const diffDays = Math.floor((targetDayStart - nowDayStart) / 86400000);
+        const diffYears = tp.year - np.year;
+
+        const timeStr = `${String(tp.hour).padStart(2, "0")}:${String(tp.minute).padStart(2, "0")}`;
+        const diffMinutes = Math.floor((now.getTime() - target.getTime()) / 60000);
+
+        let text;
+        if (diffDays === 0) {
+          if (diffMinutes >= 0 && diffMinutes < 1) {
+            text = "刚刚";
+          } else if (diffMinutes >= 1 && diffMinutes < 60) {
+            text = `${diffMinutes}分钟前`;
+          } else {
+            text = `今天 ${timeStr}`;
+          }
+        } else if (diffDays === -1) {
+          text = `昨天 ${timeStr}`;
+        } else if (diffDays === -2) {
+          text = `前天 ${timeStr}`;
+        } else if (diffDays === 1) {
+          text = `明天 ${timeStr}`;
+        } else if (diffDays === 2) {
+          text = `后天 ${timeStr}`;
+        } else {
+          const dateStr = `${tp.month}月${tp.day}日`;
+          if (diffYears === 0) {
+            text = `${dateStr} ${timeStr}`;
+          } else if (diffYears === 1) {
+            text = `明年${dateStr}`;
+          } else if (diffYears === -1) {
+            text = `去年${dateStr}`;
+          } else {
+            text = `${tp.year}年${dateStr}`;
+          }
+        }
+
+        el.textContent = text;
+      });
+    });
+  }
+
+  initRelativeTime();
+</script>
