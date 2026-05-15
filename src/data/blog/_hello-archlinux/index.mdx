@@ -1,7 +1,7 @@
 ---
 # author: 
 pubDatetime: 2026-05-07T13:50:00+08:00
-# modDatetime: 
+modDatetime: 2026-05-15T13:19:45+08:00
 title: Archlinux 安装笔记
 slug: hello-archlinux
 featured: true
@@ -217,16 +217,23 @@ pacman -S timeshift # 快照工具
 systemctl enable sddm
 ```
 
+蓝牙驱动
+
+```bash
+pacman -S bluez bluez-utils
+systemctl enable bluetooth
+```
+
 VMware 的设置
 
 - `pacman -S open-vm-tools` 安装 vmware 工具包, 推荐也把 gtkmm3 装上
 - `systemctl enable vmtoolsd` 开机启动
 
-#### CPU 徽码、驱动和引导
+#### CPU 微码、驱动和引导
 
-若在虚拟机中安装系统, 则无需安装 CPU 徽码
+若在虚拟机中安装系统, 则无需安装 CPU 微码
 
-安装 CPU 徽码
+安装 CPU 微码
 
 intel
 
